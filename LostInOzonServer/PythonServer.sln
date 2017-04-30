@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "IronPythonApplication1", "IronPythonApplication1\IronPythonApplication1.pyproj", "{9AC298E6-B1CC-4AAA-B63F-EBFCA176B9B6}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonServer", "PythonServer\PythonServer.pyproj", "{E0B97D60-6B0A-4A34-B6D4-181E4BA8CEC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,8 +11,8 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9AC298E6-B1CC-4AAA-B63F-EBFCA176B9B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9AC298E6-B1CC-4AAA-B63F-EBFCA176B9B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0B97D60-6B0A-4A34-B6D4-181E4BA8CEC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0B97D60-6B0A-4A34-B6D4-181E4BA8CEC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
