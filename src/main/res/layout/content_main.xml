@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="msh.nasa.hackathon17.ui.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+
+
+    <EditText
+        android:id="@+id/source_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:hint="SOURCE"/>
+
+    <EditText
+        android:id="@+id/destination_et"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="DESTINATION"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/source_et"
+        android:layout_margin="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="19dp"
+        android:layout_marginLeft="8dp"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="78dp"
+        app:layout_constraintHorizontal_bias="0.0"/>
+
+
+    <Button
+        android:id="@+id/search_bt"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="SEARCH"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/destination_et"
+        app:layout_constraintHorizontal_bias="0.923"
+        app:layout_constraintVertical_bias="0.322"
+        android:layout_margin="20dp" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        tools:layout_editor_absoluteX="168dp"
+        android:layout_marginTop="47dp"
+        android:visibility="gone"/>
+
+</android.support.constraint.ConstraintLayout>
