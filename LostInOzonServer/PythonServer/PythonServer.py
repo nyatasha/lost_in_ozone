@@ -18,51 +18,46 @@ BACKLOG = 5
 def collect_zombie_children(signum, frame):
     while True:
         try:
-            # не блокирующий waitpid (осторожно)
             pid, status = os.waitpid(-1, os.WNOHANG)
             logger.info('Vanish children pid=%d status=%d' % (pid, status))
-            if pid == 0: # больше зомбей нет
+            if pid == 0: 
                 break
         except ChildProcessError as e:
             if e.errno == errno.ECHILD:
-                # всё, больше потомков нет
                 break
             raise
 
 
-def handle(sock, clinet_ip, client_port):
-    # обработчик, работающий в процессе-потомке
+def handle(connection, clinet_ip, client_port):
     logger.info('Start to process request from %s:%d' % (clinet_ip, client_port))
     in_buffer = b''
     
     while not in_buffer.endswith(b'\n'):
-        in_buffer += sock.recv(1024)
+        in_buffer += connection.recv(1024)
     logger.info('In buffer = ' + repr(in_buffer))
-    
+    receivedString = in_buffer.split('\r\n')
+    notParsedJson = receivedString[-1]
+
     #f = open('d:\issoft\LostInOzonData\json_example.txt', 'r')
     #str = f.read()
-    received = json.loads(in_buffer)
-    latitude = received['path'][0]['point']['latitude']
-    longitude = received['path'][0]['point']['longitude']
+    received = json.loads(notParsedJson)
+    latitude = received['source']['latitude']
+    longitude = received['source']['longitude']
     
+    response = 'very huge radiation'
 
-    
-
-    # отправляем
-    sock.sendall(response)
+    connection.send(response)
+    response = ProcessRequest(0, 0)
     logger.info('Done.')
 
 
 def serve_forever():
-    response = ProcessRequest(0, 0)
-    # создаём слушающий сокет
+    
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # re-use port
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     sock.bind(BIND_ADDRESS)
     sock.listen(BACKLOG)
-    # слушаем и при получении нового входящего соединения,
-    # порождаем потомка, который будет его обрабатывать
     logger.info('Listning no %s:%d...' % BIND_ADDRESS)
     while True:
         try:
@@ -71,19 +66,14 @@ def serve_forever():
             if e.errno == errno.EINTR:
                 continue
             raise
+        
+        handle(connection, client_ip, clinet_port)
+        sock.close()
+        
+        #pid = os.fork()
+        #if pid == 0:
+        #    break
 
-        pid = os.fork()
-        if pid == 0:
-            # этот код выполняется в потомке
-            # потомку не нужнен слушающий сокет; сразу закрываем
-            sock.close()
-            # обрабатывает входщий запрос и формируем ответ
-            handle(connection, client_ip, clinet_port)
-            # выходим из цикла и завершаем работу потока
-            break
-
-        # этот код выполняется в родителе
-        # родителю не нужно входщее соединенеие, он его закрывает
         connection.close()
 
 def ProcessRequest(latitude, longitude):
@@ -106,7 +96,6 @@ def ProcessRequest(latitude, longitude):
     return sendedRequest
 
 def main():
-    # настраиваем логгинг
     logger.setLevel(logging.DEBUG)
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
@@ -117,9 +106,7 @@ def main():
     ch.setFormatter(formatter)
     logger.addHandler(ch)
     logger.info('Run')
-    # подключаем удлятор зомбей
     #signal.signal(signal.SIGCHLD, collect_zombie_children)
-    # запускаем сервер
     serve_forever()
 
 
