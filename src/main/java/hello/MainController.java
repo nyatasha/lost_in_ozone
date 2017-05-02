@@ -16,22 +16,5 @@ public class MainController {
     public String home(){
         return "home";
     }
-    public double calcRadiation(double lat, double lon, double height){
-        double radiation = 0;
-        return radiation;
-    }
-    public String createJsonResult(double[][] coordsArray){
-        JSONObject results = new JSONObject();
-        try {
-            JSONArray coords = new JSONArray ();
-            for(int i = 0; i < coordsArray.length;i++){
-                coords.put(String.valueOf(coordsArray[0][i]));
-                coords.put(String.valueOf(coordsArray[1][i]));
-                results.put(String.valueOf(calcRadiation(coordsArray[0][i],coordsArray[1][i],10)), coords);
-            }
-        } catch (Exception jse) {
-            return "Error: " + jse.toString();
-        }
-        return results.toString();
-    }
+
 }
