@@ -12,7 +12,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
         DataController dataController = new DataController();
         try {
-            dataController.calcFlight("SVO","NCE");
+            dataController.calcFlight("MSQ","GIG");
         } catch (IOException e) {
             e.printStackTrace();
         }
