@@ -12,4 +12,5 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
     AIzaSyBELgSvb6dTcpog_08ucLBv2K-oTZe47yM
 </string>
+    <string name="title_activity_detail_flight">DetailFlightActivity</string>
 </resources>
