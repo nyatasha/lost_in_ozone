@@ -239,12 +239,35 @@ def FindLatitudeByLongtitude(latA, longA, latB, longB, lon) :
 
 
 def CreateTableOfRadiation(latA, longA, latB, longB):
-    diff = longB - longA
-    steps = diff / 10.
+    listOfRadiations = []
+    #To simplify calculations make longitude from 0 to 360deg
+    simpleLongA = longA + 180
+    simpleLongB = longB + 180
+    longitudeDiff = np.abs(simpleLongA - simpleLongB)
+    stepCount = 10
+    
+    stepLen = longitudeDiff / stepCount
+    longitudes = np.arange(min(simpleLongA, simpleLongB), max(simpleLongA, simpleLongB), stepLen)
+    longitudes = longitudes - 180
+    for currentLong in longitudes:
+        currentLatitude = FindLatitudeByLongtitude(latA, longA, latB, longB, currentLong)
+        currentRad = CalculateRadiationSivertInMs(currentLatitude, currentLong, dt.datetime(2017, 4, 30, 9, 5))
+        listOfRadiations.append([currentLatitude, currentLong, currentRad])
 
+    return listOfRadiations
 
-def main(latitude, longitude, datetime):
-    print datetime
+# speed in m/sec
+def SummarizeRadiation(listOfRadiations, vehicleSpeed):
+    i = 0;
+    totalRadiation = 0
+    while i < len(listOfRadiations) - 1:
+        distance = calculateDirectDistance(listOfRadiations[i][0], listOfRadiations[i][1], listOfRadiations[i+1][0], listOfRadiations[i+1][1])
+        time = distance / vehicleSpeed
+        totalRadiation = totalRadiation + listOfRadiations[i][2] * time
+        i = i + 1
+    return totalRadiation
+
+def CalculateRadiationSivertInMs(latitude, longitude, datetime):
     mag = geo2mag(np.array([[latitude, longitude]]).T).T
     inclination = GetInclination(datetime.timetuple().tm_yday)
     rigidity = CalculateRigidity(mag[0, 0], inclination)
@@ -277,10 +300,31 @@ def main(latitude, longitude, datetime):
             print "Particle speed: (MeV)", speed
             R += EquivelentRadiation([data[1], ], [speed, ])
     print R
+    return R
+
+#in meters
+def calculateDirectDistance(latA, longA, latB, longB):
+    EARTH_RADIUS = 6372.795
+    lat1 = latA * np.pi / 180
+    lat2 = latB * np.pi  / 180
+    long1 = longA * np.pi / 180
+    long2 = longB * np.pi / 180
+    cl1 = np.cos(lat1)
+    cl2 = np.cos(lat2)
+    sl1 = np.sin(lat1)
+    sl2 = np.sin(lat2)
+    delta = long2 - long1
+    cdelta = np.cos(delta)
+    sdelta = np.sin(delta)
+
+    y = np.sqrt(np.power(cl2 * sdelta, 2) + np.power(cl1 * sl2 - sl1 * cl2 * cdelta, 2))
+    x = sl1 * sl2 + cl1 * cl2 * cdelta
+
+    ad = np.arctan2(y, x)
+    dist = np.ceil(ad * EARTH_RADIUS)
+    return dist * 1000;
 
 
-main(75, 100, dt.datetime(2017, 4, 30, 9, 5))
-
-
-# impulse = 14.8 * (np.cos(lambd_rad) ** 4) / ((1 + under_square ** 0.5) ** 2)
-# print impulse
+def CalculateTotalRadion(latitudeA, longitudeA, latitudeB, longitudeB, speed):
+    tableOfRadiations = CreateTableOfRadiation(latitudeA, longitudeA, latitudeB, longitudeB)
+    return SummarizeRadiation(tableOfRadiations, speed)

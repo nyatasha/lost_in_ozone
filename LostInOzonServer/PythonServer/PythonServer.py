@@ -7,6 +7,7 @@ import time
 import json
 import ThirdPartyCalculation as calc
 import ServerEntity as se
+import LostInOzon as lio
 
 logger = logging.getLogger('main')
 
@@ -41,8 +42,12 @@ def handle(connection, clinet_ip, client_port):
     #f = open('d:\issoft\LostInOzonData\json_example.txt', 'r')
     #str = f.read()
     received = json.loads(notParsedJson)
-    latitude = received['source']['latitude']
-    longitude = received['source']['longitude']
+    latitudeA = received['source']['latitude']
+    longitudeA = received['source']['longitude']
+    latitudeB = received['destination']['latitude']
+    longitudeB = received['destination']['longitude']
+
+    lio.CalculateTotalRadion(latitudeA, longitudeA, latitudeB, longitudeB, 900 / 3.6)
     
     response = 'very huge radiation'
 
