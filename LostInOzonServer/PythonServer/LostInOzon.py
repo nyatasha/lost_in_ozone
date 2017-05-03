@@ -229,6 +229,19 @@ def get_density_velocity_by_time(data, datetime):
         if d[0].time() == datetime.time():
             return d
 
+def FindLatitudeByLongtitude(latA, longA, latB, longB, lon) :
+    latitudeA = latA * np.pi / 180.0
+    longitudeA = longA * np.pi / 180.0
+    latitudeB = latB * np.pi / 180.0
+    longitudeB = longB * np.pi / 180.0
+    pointLongitude = lon * np.pi / 180.0
+    return np.degrees(np.arctan((np.tan(latitudeA) * np.sin(longitudeB - pointLongitude) + np.tan(latitudeB) * np.sin(pointLongitude - longitudeA))/ np.sin(longitudeB - longitudeA)));
+
+
+def CreateTableOfRadiation(latA, longA, latB, longB):
+    diff = longB - longA
+    steps = diff / 10.
+
 
 def main(latitude, longitude, datetime):
     print datetime

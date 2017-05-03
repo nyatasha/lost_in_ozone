@@ -33,7 +33,7 @@ def handle(connection, clinet_ip, client_port):
     in_buffer = b''
     
     while not in_buffer.endswith(b'\n'):
-        in_buffer += connection.recv(1024)
+        in_buffer += connection.recv(2048)
     logger.info('In buffer = ' + repr(in_buffer))
     receivedString = in_buffer.split('\r\n')
     notParsedJson = receivedString[-1]

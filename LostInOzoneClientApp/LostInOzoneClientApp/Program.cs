@@ -18,8 +18,9 @@ namespace LostInOzoneClientApp
          using (HttpClient client = new HttpClient())
          {
             HttpContent content = new StringContent($"{json}\n");
-            try {
-               client.DefaultRequestHeaders.Add("UserAgent", "Dima");
+            try
+            {
+               client.DefaultRequestHeaders.Add("User-Agent", "Anything");
                using (HttpResponseMessage response = await client.PostAsync("http://localhost:8999", content))
                {
                   if (response.IsSuccessStatusCode)
