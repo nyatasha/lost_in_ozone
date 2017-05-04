@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>e0b97d60-6b0a-4a34-b6d4-181e4ba8cec2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>RadiationMap.py</StartupFile>
+    <StartupFile>PythonServer.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

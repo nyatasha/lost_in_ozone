@@ -12,8 +12,8 @@ def plot_world_map():
     #m.fillcontinents(color='white',lake_color='white')
     m.drawcoastlines()
 
-    lat = np.random.randint(-1800, 1800, 100000) / 10
-    lon = np.random.randint(-900, 900, 100000) /10
+    lat = np.random.randint(-1800, 1800, 200000) / 10
+    lon = np.random.randint(-900, 900, 200000) /10
     over = []
     
    

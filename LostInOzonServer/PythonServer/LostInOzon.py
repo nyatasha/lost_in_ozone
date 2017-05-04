@@ -23,8 +23,8 @@ def geo2mag(incoord):
         """
 
     # SOME 'constants'...
-    lon = 288.59  # or 71.41W
-    lat = 79.3
+    lon = 193.7  # or 71.41W
+    lat = 86.4
     r = 1.0
 
     # convert first to radians
@@ -264,7 +264,11 @@ def SummarizeRadiation(listOfRadiations, vehicleSpeed):
         distance = calculateDirectDistance(listOfRadiations[i][0], listOfRadiations[i][1], listOfRadiations[i+1][0], listOfRadiations[i+1][1])
         time = distance / vehicleSpeed
         totalRadiation = totalRadiation + listOfRadiations[i][2] * time
+        currentRadString = 'radiation at step ' + str(i) + ' ' + str(listOfRadiations[i][2] * time)
+        print currentRadString
         i = i + 1
+    totalRadString = 'total radiation ' + str(totalRadiation)
+    print totalRadString
     return totalRadiation
 
 def CalculateRadiationSivertInMs(latitude, longitude, datetime):
@@ -295,10 +299,17 @@ def CalculateRadiationSivertInMs(latitude, longitude, datetime):
     print "Partical rigidities: ", particles_rigidities
     R = 0
     for i, _ in enumerate(particles_rigidities):
-        if particles_rigidities[i] > rigidity:
-            speed = speed_to_ev(particles[i], data[2] * 10 ** 3) / 10 ** 6
-            print "Particle speed: (MeV)", speed
-            R += EquivelentRadiation([data[1], ], [speed, ])
+        #if particles_rigidities[i] > rigidity:
+        scaleCoefficy = 0
+        if i == PROTON:
+            scaleCoefficy = 0.05
+        else:
+            scaleCoefficy = 0.05 * 10 ** -4
+
+        scale = np.abs((particles_rigidities[i] - scaleCoefficy * rigidity) / particles_rigidities[i])
+        speed = speed_to_ev(particles[i], data[2] * 10 ** 3 * scale) / 10 ** 6
+        print "Particle speed: (MeV)", speed
+        R += EquivelentRadiation([data[1], ], [speed, ])
     print R
     return R
 
