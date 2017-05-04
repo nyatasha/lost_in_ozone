@@ -15,8 +15,9 @@ def plot_world_map():
     lat = np.random.randint(-1800, 1800, 100000) / 10
     lon = np.random.randint(-900, 900, 100000) /10
     over = []
+    
     for i in range(len(lon)):
-        over.append(loi.CalculateRigidity(lon[i], lat[i]))
+        over.append(loi.CalculateRigidity(lat[i], loi.GetInclination(120)))
     #over = [lon[i] + lat[i] for i in range(len(lon))]
 
     x, y = m(lat, lon)
