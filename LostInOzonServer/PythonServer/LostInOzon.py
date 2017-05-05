@@ -4,6 +4,7 @@
 import numpy as np
 import math
 import datetime as dt
+import distance as clc_dst
 
 from numpy import pi, cos, sin, arctan2, sqrt, dot
 
@@ -28,7 +29,7 @@ def geo2mag(incoord):
     r = 1.0
 
     # convert first to radians
-    lon, lat = [x*pi/180 for x in lon, lat]
+    lon, lat = [x*pi/180 for x in [lon, lat]]
 
     glat = incoord[0] * pi / 180.0
     glon = incoord[1] * pi / 180.0
@@ -185,15 +186,15 @@ def EquivelentRadiation(flux_density, particle_energy):
         aircraft_penetration_path = np.interp([particle_energy[i]],
                                               particles_path_lengthes[i][0],
                                               particles_path_lengthes[i][1])[0]
-        print "Aircraft penetration: ", aircraft_penetration_path
+        print ("Aircraft penetration: ", aircraft_penetration_path)
         body_penetration_path = np.interp([particle_energy[i]],
                                           particles_path_lengthes[i][0],
                                           particles_path_lengthes[i][2])[0]
-        print "Body penetration: ", body_penetration_path
+        print ("Body penetration: ", body_penetration_path)
 
         exp = (-protection_depth / aircraft_penetration_path) -\
               (tissue_depth / body_penetration_path)
-        print "Under exp: ", exp
+        print ("Under exp: ", exp)
         energy = particle_energy[i] * 10 ** 6 * 1.6 * 10 ** -19
         H += quality * flux_density[i] * energy * math.exp(exp)
     H *= 0.2
@@ -241,18 +242,30 @@ def FindLatitudeByLongtitude(latA, longA, latB, longB, lon) :
 def CreateTableOfRadiation(latA, longA, latB, longB):
     listOfRadiations = []
     #To simplify calculations make longitude from 0 to 360deg
-    simpleLongA = longA + 180
-    simpleLongB = longB + 180
-    longitudeDiff = np.abs(simpleLongA - simpleLongB)
-    stepCount = 10
-    
-    stepLen = longitudeDiff / stepCount
-    longitudes = np.arange(min(simpleLongA, simpleLongB), max(simpleLongA, simpleLongB), stepLen)
-    longitudes = longitudes - 180
-    for currentLong in longitudes:
-        currentLatitude = FindLatitudeByLongtitude(latA, longA, latB, longB, currentLong)
-        currentRad = CalculateRadiationSivertInMs(currentLatitude, currentLong, dt.datetime(2017, 4, 30, 9, 5))
-        listOfRadiations.append([currentLatitude, currentLong, currentRad])
+#    simpleLongA = longA + 180
+#    simpleLongB = longB + 180
+#    longitudeDiff = np.abs(simpleLongA - simpleLongB)
+#    stepCount = 10
+#    
+#    stepLen = longitudeDiff / stepCount
+#    longitudes = np.arange(min(simpleLongA, simpleLongB), max(simpleLongA, simpleLongB), stepLen)
+#    longitudes = longitudes - 180
+#    for currentLong in longitudes:
+#        print("")
+#        currentLatitude = FindLatitudeByLongtitude(latA, longA, latB, longB, currentLong)
+#        print("Latitude: ", currentLatitude)
+#        print("Longitude: ", currentLong)        
+#        currentRad = CalculateRadiationSivertInMs(currentLatitude, currentLong, dt.datetime(2017, 4, 30, 9, 5))
+#        print("Radiation: ", currentRad)
+#        listOfRadiations.append([currentLatitude, currentLong, currentRad])
+    rLat, rLong = clc_dst.equal_distance(latA, longA, latB, longB, 15)
+    for i in range(len(rLat)):
+        print("")
+        print("Latitude: ", rLat[i])
+        print("Longitude: ", rLong[i]) 
+        currentRad = CalculateRadiationSivertInMs(rLat[i], rLong[i], dt.datetime(2017, 4, 30, 9, 5))
+        print("Radiation: ", currentRad)
+        listOfRadiations.append([rLat[i], rLong[i], currentRad])
 
     return listOfRadiations
 
@@ -263,12 +276,14 @@ def SummarizeRadiation(listOfRadiations, vehicleSpeed):
     while i < len(listOfRadiations) - 1:
         distance = calculateDirectDistance(listOfRadiations[i][0], listOfRadiations[i][1], listOfRadiations[i+1][0], listOfRadiations[i+1][1])
         time = distance / vehicleSpeed
+        print("Distance: ", distance)
+        print("Time: ", time)    
         totalRadiation = totalRadiation + listOfRadiations[i][2] * time
         currentRadString = 'radiation at step ' + str(i) + ' ' + str(listOfRadiations[i][2] * time)
-        print currentRadString
+        print(currentRadString)
         i = i + 1
     totalRadString = 'total radiation ' + str(totalRadiation)
-    print totalRadString
+    print(totalRadString)
     return totalRadiation
 
 def CalculateRadiationSivertInMs(latitude, longitude, datetime):
@@ -287,7 +302,7 @@ def CalculateRadiationSivertInMs(latitude, longitude, datetime):
         "No data for this time"
         return 0
     data = get_density_velocity_by_time(data, datetime)
-    print "Data, density, speed: ", data
+    print("Data, density, speed: ", data)
 
     particles_rigidities = []
     for p in particles:
@@ -295,8 +310,8 @@ def CalculateRadiationSivertInMs(latitude, longitude, datetime):
         particles_rigidities.append(ParticleRigidity(p, data[2] * 10 ** 3)
                                     / 10 ** 9)
 
-    print "Local rigidity: ", rigidity
-    print "Partical rigidities: ", particles_rigidities
+    print("Local rigidity: ", rigidity)
+    print("Partical rigidities: ", particles_rigidities)
     R = 0
     for i, _ in enumerate(particles_rigidities):
         #if particles_rigidities[i] > rigidity:
@@ -308,9 +323,9 @@ def CalculateRadiationSivertInMs(latitude, longitude, datetime):
 
         scale = np.abs((particles_rigidities[i] - scaleCoefficy * rigidity) / particles_rigidities[i])
         speed = speed_to_ev(particles[i], data[2] * 10 ** 3 * scale) / 10 ** 6
-        print "Particle speed: (MeV)", speed
+        print("Particle speed: (MeV)", speed)
         R += EquivelentRadiation([data[1], ], [speed, ])
-    print R
+    print(R)
     return R
 
 #in meters

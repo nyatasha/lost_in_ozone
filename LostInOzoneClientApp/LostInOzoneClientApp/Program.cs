@@ -52,8 +52,8 @@ namespace LostInOzoneClientApp
             },
             destination = new Location()
             {
-               latitude = 51.5074,
-               longitude = 0.1278
+               latitude = 53.45,
+               longitude = -77.38
             }
          };
          WebWorker webWorker = new WebWorker();
