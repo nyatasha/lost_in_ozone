@@ -1,26 +1,34 @@
 package msh.nasa.hackathon17.ui;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.util.TimeUtils;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.format.Time;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TimePicker;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -40,7 +48,11 @@ public class MainActivity extends AppCompatActivity
 
     private EditText sourceEt;
     private EditText destinationEt;
+    private EditText dateEt;
+    private EditText startTime;
+    private EditText endTime;
     private ProgressBar progressBar;
+    private Calendar calendar;
 
     @Override
     public void onBackPressed() {
@@ -120,7 +132,12 @@ public class MainActivity extends AppCompatActivity
         progressBar = (ProgressBar) findViewById(R.id.progress);
         sourceEt = (EditText) findViewById(R.id.source_et);
         destinationEt = (EditText) findViewById(R.id.destination_et);
+        dateEt = (EditText) findViewById(R.id.date_et);
+        startTime = (EditText) findViewById(R.id.start_time_et);
+        endTime = (EditText) findViewById(R.id.end_tiem_et);
         Button searchBtn = (Button) findViewById(R.id.search_bt);
+
+        calendar = Calendar.getInstance();
 
         searchBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -149,6 +166,60 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+
+        dateEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (v.getId() == R.id.date_et && hasFocus) {
+                    final DatePickerDialog datePickerDialog = new DatePickerDialog(
+                            MainActivity.this, new DatePickerDialog.OnDateSetListener() {
+
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                            dateEt.setText("Date: " + year + "/" + (month + 1) + "/" + dayOfMonth);
+                        }
+                    }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                    datePickerDialog.show();
+                }
+            }
+        });
+
+        startTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (v.getId() == R.id.start_time_et && hasFocus) {
+                    final TimePickerDialog timePicker = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                            startTime.setText("Start time: " + hourOfDay + ":" + minute);
+                        }
+                    }, 0, 0, false);
+
+                    timePicker.setTitle("Start time");
+                    timePicker.show();
+                }
+            }
+        });
+
+        endTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (v.getId() == R.id.end_tiem_et && hasFocus) {
+                    final TimePickerDialog timePicker = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                            endTime.setText("Start time: " + hourOfDay + ":" + minute);
+                        }
+                    }, 0, 0, false);
+
+                    timePicker.setTitle("End time");
+                    timePicker.show();
+                }
+            }
+        });
     }
 
     private WayResponse getWayResponse(final String source, final String destination) {
